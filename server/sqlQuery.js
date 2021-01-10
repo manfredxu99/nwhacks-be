@@ -17,11 +17,11 @@ exports.registerBeenToLocation = function(body) {
     return queryStr;
 }
 
-exports.registerCovid = function(userId, hasCovid) {
+exports.registerCovid = function(email, hasCovid) {
     return mapValues("UPDATE user "+
     "SET has_covid=? " + 
-    "WHERE id=?", 
-    [hasCovid, userId])
+    "WHERE email=?", 
+    [hasCovid, email])
 }
 
 exports.getCovidCount = function(body) {

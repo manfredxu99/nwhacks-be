@@ -31,7 +31,7 @@ exports.registerRoutes = async function(app) {
   app.post('/user/has-covid', async (req, res) => {
     const conn = await connection().catch(e => {})
     const body = req.body;
-    const results = await dbQueryManager(conn, sqlQuery.registerCovid(body.id, body['has_covid'])).then(result => {
+    const results = await dbQueryManager(conn, sqlQuery.registerCovid(body.email, body['has_covid'])).then(result => {
       console.log("Query success! Result is: ", result)
     }).catch(console.log);
     res.send({ results });
