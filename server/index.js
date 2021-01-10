@@ -1,20 +1,14 @@
 const DbRouter = require('./dbRouter')
+const DbObjParser = require('./dbObjParser')
 
 const express = require('express')
 const { Router } = require('express')
 const app = express()
 const port = 3000
 
-const bodyParser = require('body-parser');
+app.get('/', (req, res) => res.send('Backend Server is running!'))
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.listen(port, () => console.log(`Backend Server listening on port ${port}!`))
 
-// parse application/json
-app.use(bodyParser.json())
-
-app.get('/', (req, res) => res.send('Hello World!'))
-
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
+DbObjParser(app);
 DbRouter.registerRoutes(app);
