@@ -1,4 +1,4 @@
-const connection = require('./dbConnector')
+const dbConnector = require('./dbConnector')
 const sqlQuery = require('./sqlQuery')
 const dbQueryManager = require('./dbQueryManager')
 
@@ -12,72 +12,42 @@ const API_METHOD = Object.freeze({
 exports.registerRoutes = async function(app) {
 
   app.post('/user', async (req, res) => {
-    const conn = await connection().catch(e => {})
-    const body = req.body;
-    console.log("body is: ", req.body);
-    const results = await dbQueryManager(conn, sqlQuery.createUser(body)).then(result => {
-      console.log("Query success! Result is: ", result)
-    }).catch(console.log);
-    res.send({ results });
+    await processQuery(req, res, sqlQuery.createUser);
   })
 
   app.post('/user/location', async (req, res) => {
-    const conn = await connection().catch(e => {})
-    const body = req.body;
-    const results = await dbQueryManager(conn, sqlQuery.registerBeenToLocation(body)).catch(console.log);
-    res.send({ results });
+    await processQuery(req, res, sqlQuery.registerBeenToLocation);
   })
 
   app.post('/user/has-covid', async (req, res) => {
-    const conn = await connection().catch(e => {})
-    const body = req.body;
-    const results = await dbQueryManager(conn, sqlQuery.registerCovid(body.email, body['has_covid'])).then(result => {
-      console.log("Query success! Result is: ", result)
-    }).catch(console.log);
-    res.send({ results });
+    await processQuery(req, res, sqlQuery.registerCovid);
   })
 
   app.post('/covid-count', async (req, res) => {
-    const conn = await connection().catch(e => {})
-    const body = req.body;
-    const results = await dbQueryManager(conn, sqlQuery.getCovidCount(body)).then(result => {
-      console.log("Query success! Result is: ", result)
-    }).catch(console.log);
-    res.send({ results });
+    await processQuery(req, res, sqlQuery.getCovidCount);
   })
 }
 
-runQueryFromRoute = function(_route, _method, _query) {
-  switch(_method) {
-    case API_METHOD.GET:
-      app.get(route, async (req, res) => {
-        const conn = await connection(dbConfig).catch(e => {}) 
-        const results = await query(conn, _query).catch(console.log);
-        res.send({ results });
-      })
-      break;
-      case API_METHOD.POST:
-        app.post(route, async (req, res) => {
-          var body = req.body;
-          const conn = await connection(dbConfig).catch(e => {}) 
-          const results = await query(conn, _query).catch(console.log);
-          res.send({ results });
-        })
-        break;
-        case API_METHOD.PUT:
-          app.put(route, async (req, res) => {
-            const conn = await connection(dbConfig).catch(e => {}) 
-            const results = await query(conn, _query).catch(console.log);
-            res.send({ results });
-          })
-          break;
-          case API_METHOD.DELETE:
-            app.delete(route, async (req, res) => {
-              const conn = await connection(dbConfig).catch(e => {}) 
-              const results = await query(conn, _query).catch(console.log);
-              res.send({ results });
-            })
-            break;
-  }
+const processQuery = async (req, res, queryFunc) => {
+  const connection = await dbConnector().catch(e => {})
+  const body = req.body;
+  console.log('body: ', body)
+  const results = await dbQueryManager(connection, queryFunc(body)).then(result => {
+    console.log("Query success! Result is: ", result);
+    return { 
+      status: "success",
+      code: 200,
+      details: result
+    };
+  }).catch(error => {
+    console.log("Query failed! Error is: ", error);
+    return {
+      status: "error",
+      code: 400,
+      details: error
+    };
+  });
+  res.send(results);
+  await connection.end();
 }
 
