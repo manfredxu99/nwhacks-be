@@ -7,8 +7,8 @@ function mapValues(query, args) {
 
 exports.createUser = function(body) {
     return mapValues("INSERT INTO user "+
-    "(first_name, last_name, username, password, email) " + 
-    "VALUES ('?', '?', '?', '?', '?')", 
+    "(first_name, last_name, username, password, email, has_covid) " + 
+    "VALUES ('?', '?', '?', '?', '?', false)", 
     [body.first_name, body.last_name, body.username, body.password, body.email])
 }
 
