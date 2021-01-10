@@ -15,6 +15,10 @@ exports.registerRoutes = async function(app) {
     await processQuery(req, res, sqlQuery.createUser);
   })
 
+  app.post('/user/login', async (req, res) => {
+    await processQuery(req, res, sqlQuery.loginUser);
+  })
+
   app.post('/user/location', async (req, res) => {
     await processQuery(req, res, sqlQuery.registerBeenToLocation);
   })
@@ -37,7 +41,7 @@ const processQuery = async (req, res, queryFunc) => {
     return { 
       status: "success",
       code: 200,
-      result: !!result[0][0] ? result[0][0] : {}
+      result: !!result[0][0] ? result[0][0] : result[0] ? result[0] : {}
     };
   }).catch(error => {
     console.log("Query failed! Error is: ", error);
