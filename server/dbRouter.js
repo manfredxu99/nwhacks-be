@@ -37,7 +37,7 @@ const processQuery = async (req, res, queryFunc) => {
     return { 
       status: "success",
       code: 200,
-      details: result
+      result: !!result[0][0] ? result[0][0] : {}
     };
   }).catch(error => {
     console.log("Query failed! Error is: ", error);

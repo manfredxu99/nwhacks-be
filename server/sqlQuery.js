@@ -13,8 +13,9 @@ exports.createUser = function(body) {
 }
 
 exports.registerBeenToLocation = function(body) {
-    var queryStr = "";
-    return queryStr;
+    return mapValues(
+        "call register_been_to_location('?', ?, ?)",
+        [body.email, body.lat, body.lon]);
 }
 
 exports.registerCovid = function(body) {
@@ -25,7 +26,7 @@ exports.registerCovid = function(body) {
 }
 
 exports.getCovidCount = function(body) {
-    var queryStr = "";
-    return queryStr;
-    
+    return mapValues(
+        "call get_covid_count('?', ?)",
+        [body.lat, body.lon]);
 }
